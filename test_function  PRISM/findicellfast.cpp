@@ -7,8 +7,17 @@
 
 //快速找到所有外表面所属的体
 using namespace std;
-static int cf[6][4] = {{0, 1, 5, 4}, {3, 2, 6 ,7}, {5, 6, 7, 4}, {1, 2, 3, 0}, {1, 2, 5, 6}, {0, 3, 7, 4}};
-
+int* cf[5];
+int cf1[3] = {0, 1, 2};
+int cf2[3] = {3, 4, 5};
+int cf3[4] = {0, 1, 4, 3};
+int cf4[4] = {1, 2, 5, 4};
+int cf5[4] = {0, 2, 5, 3};
+cf[0] = cf1;
+cf[1] = cf2;
+cf[2] = cf3;
+cf[3] = cf4;
+cf[4] = cf5;
 string IntToString(int m)
 {
     stringstream stream;

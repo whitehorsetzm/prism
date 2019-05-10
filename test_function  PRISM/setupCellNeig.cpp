@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
+#include <assert.h>
 #include"struts.h"
+#include<algorithm>
 using namespace std;
 
 double MAX_VALUE(double a,double b){
@@ -14,7 +16,7 @@ int readhex(const char *filename,PRISM *pPrism){
             ifstream file;
             file.open(filename);
             if(file.is_open())
-            cout<<"open"<<endl;
+            cout<<"opened"<<endl;
             char word[200];
             string s;
             int n;
@@ -27,26 +29,20 @@ int readhex(const char *filename,PRISM *pPrism){
                     break;
                    }
             }
- //             pPrism =new PRISM[n];
-//            double vec[3];
-           // string skip;
+
             file>>s;
-            cout<<s<<endl;
 
                         int point[6];
                         int m;
                         for(int i=0;i<n;++i){
                             file>>m;
-//                            cout<<m<<endl;
                           for(int j=0;j<m;++j){
                                 file>>point[j];
-//                                cout<<point[j]<<" ";
                             }
-//                          cout<<endl;
                           for(int j=0;j<m;++j)
                             pPrism[i].vertices[j]=point[j];
                         }
-//                        cout<<"test   "<<endl;
+                        cout<<"read succuss"<<endl;
               return 0;
         }   
 
@@ -130,10 +126,6 @@ int setupCellNeig(int nNodes, int nElems, PRISM *pHexes)
                  min=pElem->vertices[cf[i][index]];
             }
             minFacNdIdx = min;
- //      cout<<facNdIdx1<<" "<<facNdIdx2<<" "<<facNdIdx3<<" "<<facNdIdx4<<" "<<min<<endl;
-      //      cout<<min<<endl;
-                   //找出最小序号点
-            //		nodeInterFace(minFacNdIdx, ndIFaces, &ndIFaceSize, vecInterFaces, vecRefIntFHash);
 
 
             j = 0;
@@ -162,8 +154,7 @@ int setupCellNeig(int nNodes, int nElems, PRISM *pHexes)
 
                 faceIt= vecInterFaces[faceIt].hashNxt;
             }
-            ndIFaceSize = j;
-      //      cout<<"j   "<<j<<endl;                       //j为已录入的数量
+            ndIFaceSize = j;                      //j为已录入的数量
                                                            //j以及vecRefIntFHash的作用应该是为了加速查找重合面，否则遍历vecInterFaces即可
                                                            //vecRefIntFHash中存的面必然和当前面有联系
                                                            //
@@ -177,13 +168,13 @@ int setupCellNeig(int nNodes, int nElems, PRISM *pHexes)
                             vecInterFaces[ndIFaces[j]].conn[k] == facNdIdx3||
                         vecInterFaces[ndIFaces[j]].conn[k] == facNdIdx4)
                         nCommon++;
+
                 if (nCommon >= 4)
                 {
-                    cout<<"find it !!!!!!!!!"<<endl;
+            //        cout<<"find it !!!!!!!!!"<<endl;
                     break;
                 }
             }
-       //     cout<<"nCommon"<<nCommon<<endl;
 
             if (nCommon < 4) {//未找到重合面，循环结束退出，说明该面尚未放入容器，该面尚未登记过lftCell。则进行登记操作
                 /* 没锟斤拷锟揭碉拷 */
@@ -210,7 +201,6 @@ int setupCellNeig(int nNodes, int nElems, PRISM *pHexes)
                 faceAd.hashNxt = vecRefIntFHash[minFacNdIdx];     //上一个faceAdIdx被放入此处，第一个faceAD的hasNxt为-1
                 vecRefIntFHash[minFacNdIdx] = faceAdIdx;          //faceAdIdx被放入此处，给下一个faceAd作为next。
                 vecInterFaces[nFaceSize++] = faceAd;              //faceAd顺序放入容器
-            //    cout<<nFaceSize<<endl;
             }
 
 
@@ -234,12 +224,10 @@ int setupCellNeig(int nNodes, int nElems, PRISM *pHexes)
                 pRgt = &pHexes[rgtCell];                             //
 
              for(int k=0;k<6;++k){
-  //               cout<<"start"<<endl;
                    if(pLft->neighbors[k]==-1)
                 {
                     pLft->neighbors[k] = rgtCell;
                     pLft->neighborsmark[k]=double((facevec[0]+facevec[1]*2+facevec[2]*3+facevec[3]*4))/10;
-                 //   cout<<pLft->neighborsmark[k]<<endl;
                     break;
                 }
              }
@@ -299,7 +287,6 @@ int setupCellNeig(int nNodes, int nElems, PRISM *pHexes)
                     faceIt= vecInterFaces[faceIt].hashNxt;  //neighbors的hasnext的意义？
                 }
                 ndIFaceSize = j;
-          //      cout<<"j   "<<j<<endl;
                                                                //j以及vecRefIntFHash的作用应该是为了加速查找重合面，否则遍历vecInterFaces即可
                                                                //vecRefIntFHash中存的面必然和当前面有联系
                                                                //
@@ -314,11 +301,10 @@ int setupCellNeig(int nNodes, int nElems, PRISM *pHexes)
                             nCommon++;
                     if (nCommon >= 3)
                     {
-      //                  cout<<"find it !!!!!!!!!"<<endl;
+          //              cout<<"find it !!!!!!!!!"<<endl;
                         break;
                     }
                 }
-           //     cout<<"nCommon"<<nCommon<<endl;
 
                 if (nCommon < 3) {//未找到重合面，循环结束退出，说明该面尚未放入容器，该面尚未登记过lftCell。则进行登记操作
                     if (nFaceSize >= nAllocFaceSize)                      //若空间不足则扩大空间
@@ -340,11 +326,9 @@ int setupCellNeig(int nNodes, int nElems, PRISM *pHexes)
                     faceAd.rgtCell = -1;
 
                     faceAdIdx = nFaceSize;
-                    cout<<vecRefIntFHash[minFacNdIdx]<<endl;
                     faceAd.hashNxt = vecRefIntFHash[minFacNdIdx];     //上一个faceAdIdx被放入此处，第一个faceAD的hasNxt为-1
                     vecRefIntFHash[minFacNdIdx] = faceAdIdx;          //faceAdIdx被放入此处，给下一个faceAd作为next。
                     vecInterFaces[nFaceSize++] = faceAd;              //faceAd顺序放入容器
-                //    cout<<nFaceSize<<endl;
                 }
 
 
@@ -353,13 +337,9 @@ int setupCellNeig(int nNodes, int nElems, PRISM *pHexes)
 
                     if(!(vecInterFaces[ndIFaces[j]].lftCell >= 0 &&
                          vecInterFaces[ndIFaces[j]].rgtCell < 0))
-                       {
-                        cout<<vecInterFaces[ndIFaces[j]].lftCell<<endl;
-                        cout<<vecInterFaces[ndIFaces[j]].rgtCell<<endl;
-                    }
 
-//                    assert(vecInterFaces[ndIFaces[j]].lftCell >= 0 &&
-//                            vecInterFaces[ndIFaces[j]].rgtCell < 0);
+                    assert(vecInterFaces[ndIFaces[j]].lftCell >= 0 &&
+                            vecInterFaces[ndIFaces[j]].rgtCell < 0);
 
 
                     vecInterFaces[ndIFaces[j]].rgtCell = cellIdx;              //既然有重合面，说明该面已经登记过，说明该面已有lftCell
@@ -371,12 +351,11 @@ int setupCellNeig(int nNodes, int nElems, PRISM *pHexes)
                     pRgt = &pHexes[rgtCell];                             //
 
                  for(int k=0;k<6;++k){
-      //               cout<<"start"<<endl;
+
                        if(pLft->neighbors[k]==-1)
                     {
                         pLft->neighbors[k] = rgtCell;
                         pLft->neighborsmark[k]=double((facevec[0]+facevec[1]*2+facevec[2]*3))/10;
-                     //   cout<<pLft->neighborsmark[k]<<endl;
                         break;
                     }
                  }
@@ -397,20 +376,6 @@ int setupCellNeig(int nNodes, int nElems, PRISM *pHexes)
     }
 
     }
-    cout<<nFaceSize<<endl;
-//    for(int i=0;i<nFaceSize;++i){
-//        cout<<vecInterFaces[i].rgtCell<<endl;
-//    }
-    for(int i=0;i<nNodes;++i){
-        int j=vecRefIntFHash[i];
-        while(j>0){
-         test<<j;
-        test<< " ";
-        j = vecInterFaces[faceIt].hashNxt;
-//        cout<<j<<endl;
-        }
-        test<<endl;
-    }
     goto END;
 FAIL:
 END:
@@ -429,14 +394,23 @@ int main()
     PRISM *pHexes;
     pHexes = new PRISM[360190];
     readhex("cylinder_o.vtk",pHexes);
-    cout<<sizeof(pHexes);
+//    for(int i=0;i<360190;++i){
+//        for(int j=0;j<6;++j)
+//        cout<<pHexes[i].vertices[j]<<" ";
+//        cout<<endl;
+//    }
+    setupCellNeig(205303,360190,pHexes);
+    ofstream file;
+    file.open("test_log.txt");
+    if(file.is_open())
     cout<<"test"<<endl;
     for(int i=0;i<360190;++i){
-        for(int j=0;j<6;++j)
-        cout<<pHexes[i].vertices[j]<<" ";
-        cout<<endl;
+        for(int j=0;j<5;++j)
+        {
+        file<<pHexes[i].neighbors[j];
+        file<<" ";
+        }
+        file<<endl;
     }
-    setupCellNeig(205303,360190,pHexes);
-    cout<<pHexes[0].neighbors[0]<<endl;
 return 0;
 }
