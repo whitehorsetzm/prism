@@ -3,6 +3,7 @@
 #include <assert.h>
 #include"struts.h"
 #include<algorithm>
+#include<assert.h>
 using namespace std;
 
 double MAX_VALUE(double a,double b){
@@ -400,6 +401,7 @@ int main()
 //        cout<<endl;
 //    }
     setupCellNeig(205303,360190,pHexes);
+        cout<<"test"<<endl;
     ofstream file;
     file.open("test_log.txt");
     if(file.is_open())

@@ -13,11 +13,7 @@ int cf2[3] = {3, 4, 5};
 int cf3[4] = {0, 1, 4, 3};
 int cf4[4] = {1, 2, 5, 4};
 int cf5[4] = {0, 2, 5, 3};
-cf[0] = cf1;
-cf[1] = cf2;
-cf[2] = cf3;
-cf[3] = cf4;
-cf[4] = cf5;
+
 string IntToString(int m)
 {
     stringstream stream;
@@ -30,6 +26,11 @@ string IntToString(int m)
 
 int findiCellFast(HYBRID_MESH &file)
 {
+    cf[0] = cf1;
+    cf[1] = cf2;
+    cf[2] = cf3;
+    cf[3] = cf4;
+    cf[4] = cf5;
     int neigbor=-2;
     int count=0;
     set<int>cellIDs;
@@ -37,25 +38,36 @@ int findiCellFast(HYBRID_MESH &file)
     map<string,int> trimap;
 
     int v[4];
-    for(int i=0;i<file.NumQuads;i++)
+    int num=0;
+    for(;num<file.NumQuads;num++)
     {
-        v[0]=file.pQuads[i].vertices[0];
-        v[1]=file.pQuads[i].vertices[1];
-        v[2]=file.pQuads[i].vertices[2];
-        v[3]=file.pQuads[i].vertices[3];
+        v[0]=file.pQuads[num].vertices[0];
+        v[1]=file.pQuads[num].vertices[1];
+        v[2]=file.pQuads[num].vertices[2];
+        v[3]=file.pQuads[num].vertices[3];
         sort(v,v+4);
         string temp=IntToString(v[0])+"_"+IntToString(v[1])+"_"+IntToString(v[2])+"_"+IntToString(v[3]);
-        trimap[temp]=i;
-
+        trimap[temp]=num;
     }
+    for(;num<file.NumQuads+file.NumTris;num++)
+    {
+        v[0]=file.pTris[num].vertices[0];
+        v[1]=file.pTris[num].vertices[1];
+        v[2]=file.pTris[num].vertices[2];
+        sort(v,v+3);
+        string temp=IntToString(v[0])+"_"+IntToString(v[1])+"_"+IntToString(v[2]);
+        trimap[temp]=num;
+    }
+
 
    int neigbormark=-1;
     map<string,int>::iterator mapIter;
-    for(int i=0;i<file.NumHexes;i++)
+    for(int i=0;i<file.NumPrsm;i++)
     {
         neigbormark=-1;
-        for(int j=0;j<6;j++)
+        for(int j=0;j<5;j++)
         {
+
             neigbor=file.pHexes[i].neighbors[j];
             neigbormark=file.pHexes[i].neighborsmark[j];
 
@@ -73,21 +85,37 @@ int findiCellFast(HYBRID_MESH &file)
 //                    }
 //                }
                 int facNdIdx1,facNdIdx2,facNdIdx3,facNdIdx4;
-                int vec[4];
-                   for (int k = 0; k <= 5;k++) {
+                int quad[4];
+                int tris[3];
+                int k;
+                   for (k = 0; k <= 5;k++) {
+                 if(k==1||k==0){
+                           facNdIdx1 = file.pHexes[i].vertices[cf[k][0]];
+                           facNdIdx2 = file.pHexes[i].vertices[cf[k][1]];
+                           facNdIdx3 = file.pHexes[i].vertices[cf[k][2]];
+                           tris[0]=facNdIdx1;
+                           tris[1]=facNdIdx2;
+                           tris[2]=facNdIdx3;
+
+                           sort(tris,tris+3);
+                           if(double(tris[0]+tris[1]*2+tris[2]*3+tris[3]*4)/10==neigbormark)
+                               break;
+                       }
+                else{
                 facNdIdx1 = file.pHexes[i].vertices[cf[k][0]];
                 facNdIdx2 = file.pHexes[i].vertices[cf[k][1]];
                 facNdIdx3 = file.pHexes[i].vertices[cf[k][2]];
                 facNdIdx4 = file.pHexes[i].vertices[cf[k][3]];
-                vec[0]=facNdIdx1;
-                vec[1]=facNdIdx2;
-                vec[2]=facNdIdx3;
-                vec[3]=facNdIdx4;
+                quad[0]=facNdIdx1;
+                quad[1]=facNdIdx2;
+                quad[2]=facNdIdx3;
+                quad[3]=facNdIdx4;
 
-                sort(vec,vec+4);
-                if(double(vec[0]+vec[1]*2+vec[2]*3+vec[3]*4)/10==neigbormark)
+                sort(quad,quad+4);
+                if(double(quad[0]+quad[1]*2+quad[2]*3+quad[3]*4)/10==neigbormark)
                     break;
                    }
+                }
                    if(i==6)
                        cout<<"error at find face"<<endl;
 
