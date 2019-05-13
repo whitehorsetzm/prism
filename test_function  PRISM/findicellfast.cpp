@@ -4,7 +4,7 @@
 #include<iostream>
 #include<sstream>
 #include"struts.h"
-
+#
 //快速找到所有外表面所属的体
 using namespace std;
 int* cf[5];
@@ -37,25 +37,26 @@ int findiCellFast(HYBRID_MESH &file)
 
     map<string,int> trimap;
 
-    int v[4];
+    int quad[4];
+    int tris[3];
     int num=0;
     for(;num<file.NumQuads;num++)
     {
-        v[0]=file.pQuads[num].vertices[0];
-        v[1]=file.pQuads[num].vertices[1];
-        v[2]=file.pQuads[num].vertices[2];
-        v[3]=file.pQuads[num].vertices[3];
-        sort(v,v+4);
-        string temp=IntToString(v[0])+"_"+IntToString(v[1])+"_"+IntToString(v[2])+"_"+IntToString(v[3]);
+        quad[0]=file.pQuads[num].vertices[0];
+        quad[1]=file.pQuads[num].vertices[1];
+        quad[2]=file.pQuads[num].vertices[2];
+        quad[3]=file.pQuads[num].vertices[3];
+        sort(quad,quad+4);
+        string temp=IntToString(quad[0])+"_"+IntToString(quad[1])+"_"+IntToString(quad[2])+"_"+IntToString(quad[3]);
         trimap[temp]=num;
     }
     for(;num<file.NumQuads+file.NumTris;num++)
     {
-        v[0]=file.pTris[num].vertices[0];
-        v[1]=file.pTris[num].vertices[1];
-        v[2]=file.pTris[num].vertices[2];
-        sort(v,v+3);
-        string temp=IntToString(v[0])+"_"+IntToString(v[1])+"_"+IntToString(v[2]);
+        tris[0]=file.pTris[num].vertices[0];
+        tris[1]=file.pTris[num].vertices[1];
+        tris[2]=file.pTris[num].vertices[2];
+        sort(tris,tris+3);
+        string temp=IntToString(tris[0])+"_"+IntToString(tris[1])+"_"+IntToString(tris[2]);
         trimap[temp]=num;
     }
 
@@ -85,9 +86,8 @@ int findiCellFast(HYBRID_MESH &file)
 //                    }
 //                }
                 int facNdIdx1,facNdIdx2,facNdIdx3,facNdIdx4;
-                int quad[4];
-                int tris[3];
                 int k;
+                string temp;
                    for (k = 0; k <= 5;k++) {
                  if(k==1||k==0){
                            facNdIdx1 = file.pHexes[i].vertices[cf[k][0]];
@@ -98,8 +98,10 @@ int findiCellFast(HYBRID_MESH &file)
                            tris[2]=facNdIdx3;
 
                            sort(tris,tris+3);
-                           if(double(tris[0]+tris[1]*2+tris[2]*3+tris[3]*4)/10==neigbormark)
+                           if(double(tris[0]+tris[1]*2+tris[2]*3+tris[3]*4)/10==neigbormark){
+                               temp=IntToString(tris[0])+"_"+IntToString(tris[1])+"_"+IntToString(tris[2]);
                                break;
+                           }
                        }
                 else{
                 facNdIdx1 = file.pHexes[i].vertices[cf[k][0]];
@@ -119,7 +121,7 @@ int findiCellFast(HYBRID_MESH &file)
                    if(i==6)
                        cout<<"error at find face"<<endl;
 
-                string temp=IntToString(vec[0])+"_"+IntToString(vec[1])+"_"+IntToString(vec[2])+"_"+IntToString(vec[3]);
+                temp=IntToString(quad[0])+"_"+IntToString(quad[1])+"_"+IntToString(quad[2])+"_"+IntToString(quad[3]);
                 mapIter=trimap.find(temp);
                 if(mapIter==trimap.end())
                 {

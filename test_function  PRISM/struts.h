@@ -78,3 +78,4 @@ public:
  int lftCell, rgtCell;    //вСсраз╫слЕ
  int hashNxt;             //
 };
+int findiCellFast(HYBRID_MESH &file);

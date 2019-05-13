@@ -295,7 +295,7 @@ int setupCellNeig(int nNodes, int nElems, PRISM *pHexes)
                 nCommon = 0;
                 for (j = 0;	j < ndIFaceSize; j++) {                 //对faceIt 也就是一个点周围一圈的面进行遍历找出重合面
                     nCommon = 0;
-                    for (k = 0; k < 4; k++)
+                    for (k = 0; k < 3; k++)
                         if (vecInterFaces[ndIFaces[j]].conn[k] == facNdIdx1 ||
                                 vecInterFaces[ndIFaces[j]].conn[k] == facNdIdx2 ||
                                 vecInterFaces[ndIFaces[j]].conn[k] == facNdIdx3)
@@ -338,6 +338,9 @@ int setupCellNeig(int nNodes, int nElems, PRISM *pHexes)
 
                     if(!(vecInterFaces[ndIFaces[j]].lftCell >= 0 &&
                          vecInterFaces[ndIFaces[j]].rgtCell < 0))
+                    {
+                        cout<<ndIFaces[j]<<endl;
+                    }
 
                     assert(vecInterFaces[ndIFaces[j]].lftCell >= 0 &&
                             vecInterFaces[ndIFaces[j]].rgtCell < 0);
@@ -414,5 +417,6 @@ int main()
         }
         file<<endl;
     }
+    cout<<"complete"<<endl;
 return 0;
 }
