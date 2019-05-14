@@ -4,7 +4,7 @@
 #include<iostream>
 #include<sstream>
 #include"struts.h"
-
+#include<algorithm>
 //快速找到所有外表面所属的体
 using namespace std;
 int* cf[5];
@@ -119,7 +119,7 @@ int findiCellFast(HYBRID_MESH &file)
                    if(i==6)
                        cout<<"error at find face"<<endl;
 
-                string temp=IntToString(vec[0])+"_"+IntToString(vec[1])+"_"+IntToString(vec[2])+"_"+IntToString(vec[3]);
+                string temp=IntToString(quad[0])+"_"+IntToString(quad[1])+"_"+IntToString(quad[2])+"_"+IntToString(quad[3]);
                 mapIter=trimap.find(temp);
                 if(mapIter==trimap.end())
                 {
